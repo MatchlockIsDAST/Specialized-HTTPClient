@@ -12,11 +12,22 @@ func New(httpclient http.Client) Client {
 
 //Client 各種特殊なクライアントを提供します
 type Client interface {
+	ChangeClient(httpclient http.Client)
+	GetClient() http.Client
+	Do(req *http.Request) (resp *http.Response, err error)
 }
 
 //Client 内部の情報を定義します
 type client struct {
 	httpclient http.Client
+}
+
+func (c *client) ChangeClient(httpclient http.Client) {
+	c.httpclient = httpclient
+}
+
+func (c *client) GetClient() http.Client {
+	return c.httpclient
 }
 
 func (c *client) Do(req *http.Request) (resp *http.Response, err error) {
