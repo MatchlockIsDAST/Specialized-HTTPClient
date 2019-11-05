@@ -45,7 +45,6 @@ func (c *client) Do(req *http.Request) (resp *http.Response, err error) {
 		log.Panicln(err)
 		return resp, err
 	}
-	defer resp.Body.Close()
 	return resp, err
 }
 
