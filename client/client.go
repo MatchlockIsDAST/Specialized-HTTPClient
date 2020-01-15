@@ -23,6 +23,7 @@ type Client interface {
 	Do(req *http.Request) (resp *http.Response, err error)
 	TimeBaseJudgeDo(elapsedMin, elapsedMax time.Duration, req *http.Request) (resp *http.Response, flag bool, err error)
 	DisplayBaseJudgeDo(included string, req *http.Request) (resp *http.Response, flag bool, err error)
+	DiffBaseJudgeDo(shouldbe bool, requests []*http.Request) (resps []*http.Response, flag bool, err error)
 }
 
 //Client 内部の情報を定義します
@@ -70,4 +71,22 @@ func (c *client) DisplayBaseJudgeDo(included string, req *http.Request) (resp *h
 	flag = judgment.DisplayBase(body, included)
 	resp.Body = stringto.IoReadCloser(body)
 	return resp, flag, err
+}
+
+//差分判定を行うclient
+//shouldbe		: 完全一致が正常 True , 完全不一致が正常 False
+//requests		: 検証用のHTTPリクエスト
+func (c *client) DiffBaseJudgeDo(shouldbe bool, requests []*http.Request) (resps []*http.Response, flag bool, err error) {
+	resps = make([]*http.Response, len(requests))
+	bodys := make([]string, len(requests))
+	for i := 0; i < len(requests); i++ {
+		resps[i], err = c.Do(requests[i])
+		bodys[i] = tostring.Body(resps[i].Body)
+		resps[i].Body = stringto.IoReadCloser(bodys[i])
+		if err != nil {
+			return nil, false, err
+		}
+	}
+	flag = judgment.DiffBase(bodys)
+	return resps, flag, nil
 }
