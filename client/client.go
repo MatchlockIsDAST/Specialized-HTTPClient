@@ -88,5 +88,6 @@ func (c *client) DiffBaseJudgeDo(shouldbe bool, requests []*http.Request) (resps
 		}
 	}
 	flag = judgment.DiffBase(bodys)
-	return resps, flag, nil
+	//flag == shouldbe 差分一致の判定と差分可否をandすると結果が確認できる
+	return resps, flag == shouldbe, nil
 }
