@@ -14,3 +14,14 @@ func TimeBase(elapsedMin, elapsedMax, duration time.Duration) bool {
 func DisplayBase(display, included string) bool {
 	return strings.Contains(display, included)
 }
+
+//Diffbase 取得したbodyの照合を行う
+func DiffBase(responsbodys []string) bool {
+	var flag bool
+	for i := 1; i < len(responsbodys); i++ {
+		if responsbodys[0] == responsbodys[1] {
+			flag = true
+		}
+	}
+	return flag
+}
